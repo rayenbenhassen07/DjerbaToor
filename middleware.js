@@ -44,6 +44,10 @@ async function fetchData(url) {
 
 // Handler function to map paths to API URLs
 function handleApiRequest(pathname) {
+  if (pathname === "/api/trips") {
+    return `http://75.119.130.218:8055/items/trips`;
+  }
+
   // Extract dynamic segments for /api/trip/:slug
   const tripMatch = pathname.match(/^\/api\/trip\/([^\/]+)$/);
   const tripSlug = tripMatch ? tripMatch[1] : null;
