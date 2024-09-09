@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Loader from "@/Components/Loader";
+import ReservationModal from "@/Components/ReservationModel";
 
 const SinglePageProduct = ({ slug }) => {
   const [data, setData] = useState(null);
@@ -11,11 +12,20 @@ const SinglePageProduct = ({ slug }) => {
   const [error, setError] = useState(null);
   const [errorReservation, setErrorReservation] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
-  const [singleQuads, setSingleQuads] = useState(0); // Single quads selected
-  const [doubleQuads, setDoubleQuads] = useState(0); // Double quads selected
   const [finalPrice, setFinalPrice] = useState(0); // Final price
   const [selectedOptions, setSelectedOptions] = useState([]); // Store selected options as an array
   const [loading, setLoading] = useState(true);
+  const [tripQuantity, setTripQuantity] = useState(1);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,12 +69,12 @@ const SinglePageProduct = ({ slug }) => {
         return acc + (option ? Number(option.additional_price) : 0);
       }, 0);
 
-      const totalPrice = basePrice + optionsPrice;
+      const totalPrice = (basePrice + optionsPrice) * tripQuantity; // Multiply by tripQuantity
 
       // Set final price
       setFinalPrice(Number(totalPrice).toFixed(2));
     }
-  }, [singleQuads, doubleQuads, data, selectedOptions, options]);
+  }, [data, selectedOptions, options, tripQuantity]);
 
   const handleOptionClick = (id) => {
     const clickedOption = options.find((option) => option.id === id);
@@ -92,16 +102,16 @@ const SinglePageProduct = ({ slug }) => {
 
     // Gather selected options with their values
     const reservationData = {
-      singleQuads,
-      doubleQuads,
       finalPrice,
+      tripQuantity, // Add trip quantity to the reservation data
       selectedOptions: selectedOptions
         .map((optionId) => {
           const option = options.find((o) => o.id === optionId);
           return option
             ? {
-                name: option.option_name,
-                value: option.option_type,
+                id: option.id,
+                // name: option.option_name,
+                // value: option.option_type,
               }
             : null;
         })
@@ -113,6 +123,8 @@ const SinglePageProduct = ({ slug }) => {
       (acc[option.option_name] = acc[option.option_name] || []).push(option);
       return acc;
     }, {});
+    console.log("Reservation Data:", JSON.stringify(reservationData, null, 2));
+    console.log("groupedOptions", groupedOptions);
 
     const missingOptions = Object.entries(groupedOptions).some(
       ([optionName, group]) => {
@@ -122,6 +134,7 @@ const SinglePageProduct = ({ slug }) => {
       }
     );
 
+    console.log("missingOptions", missingOptions);
     if (missingOptions) {
       setErrorReservation("Please select an option for each option group.");
       return;
@@ -147,9 +160,21 @@ const SinglePageProduct = ({ slug }) => {
     }
 
     setErrorReservation(null);
+    handleOpenModal();
     console.log("Reservation Data:", JSON.stringify(reservationData, null, 2));
 
     // Submit logic here (e.g., send reservation data to the server)
+  };
+
+  const handleModalSubmit = (data) => {
+    // This is where you would submit the reservation data (user + options) to the backend
+    console.log("Final Reservation Data:", data);
+
+    // Close modal after submission
+    handleCloseModal();
+
+    // Here you'd send the data to your backend API
+    // For example: axios.post('/api/reservation', data);
   };
 
   if (error) {
@@ -223,10 +248,18 @@ const SinglePageProduct = ({ slug }) => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="grid gap-6 md:gap-10">
-            <div className="flex justify-start items-center gap-10">
-              {/* Total Quads */}
-
-              {/* Only show single and double quad inputs if totalQuads is greater than 0 */}
+            <div className="flex justify-start items-center gap-10 ">
+              {/* Trip Quantity */}
+              <div className="grid gap-4 ">
+                <label className="text-base font-semibold">Quantity:</label>
+                <input
+                  type="number"
+                  value={tripQuantity}
+                  min="1"
+                  onChange={(e) => setTripQuantity(Number(e.target.value))}
+                  className="border-2 border-neutral-600 rounded p-2 text-black"
+                />
+              </div>
             </div>
 
             {/* Options */}
@@ -294,6 +327,16 @@ const SinglePageProduct = ({ slug }) => {
           dangerouslySetInnerHTML={{ __html: data.description }}
         />
       </div>
+      <ReservationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleModalSubmit}
+        reservationData={
+          {
+            /* Pass in the reservation data */
+          }
+        }
+      />
     </div>
   );
 };

@@ -81,16 +81,19 @@ const QuadTrip = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Check if totalQuads is valid
     if (totalQuads <= 0) {
       setErrorReservation("You have to select one or more Quads.");
       return;
     }
+
+    // Ensure the total number of single and double quads matches totalQuads
     if (singleQuads + doubleQuads !== totalQuads) {
       setErrorReservation("You have to choose the right number of quads.");
       return;
     }
 
-    // Prepare the data to log
+    // Prepare the reservation data
     const reservationData = {
       totalQuads,
       singleQuads,
@@ -111,7 +114,26 @@ const QuadTrip = () => {
         .filter((option) => option !== null),
     };
 
-    // Check for conditions
+    // Get unique option groups
+    const optionGroups = [...new Set(options.map((o) => o.group))];
+
+    // Check if the user selected at least one option from each group
+    const missingOptionGroups = optionGroups.filter((group) => {
+      return !reservationData.selectedOptions.some(
+        (option) => option.group === group
+      );
+    });
+
+    if (missingOptionGroups.length > 0) {
+      setErrorReservation(
+        `Please select at least one option for each group: ${missingOptionGroups.join(
+          ", "
+        )}`
+      );
+      return;
+    }
+
+    // Check for specific option conditions
     const periodeOption = reservationData.selectedOptions.find(
       (option) => option.name === "periode"
     );
@@ -119,7 +141,11 @@ const QuadTrip = () => {
       (option) => option.name === "time"
     );
 
-    if (periodeOption.id == 2 && timeOption.id !== 3) {
+    if (
+      periodeOption &&
+      periodeOption.id == 2 &&
+      (!timeOption || timeOption.id !== 3)
+    ) {
       setErrorReservation(
         "If you choose 'periode' as 3h, you must choose 'time' as 7:00 AM."
       );
@@ -132,7 +158,9 @@ const QuadTrip = () => {
     // Log the reservation data in JSON format
     console.log("Reservation Data:", JSON.stringify(reservationData, null, 2));
 
+    // Clear error message if all checks pass
     setErrorReservation(null);
+
     // Add your submit logic here (e.g., send data to the server)
   };
 
