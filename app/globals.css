@@ -20,3 +20,26 @@
     transform: rotate(360deg);
   }
 }
+
+.modall {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modall-content {
+  background-color: #fff; /* White background */
+  padding: 2rem; /* Padding inside modal */
+  border-radius: 8px; /* Rounded corners */
+  width: 90%; /* Width of the modal */
+  max-width: 500px; /* Maximum width for large screens */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  position: relative;
+}
