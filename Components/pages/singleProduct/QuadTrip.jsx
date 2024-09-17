@@ -108,21 +108,9 @@ const QuadTrip = () => {
     const reservationData = {
       quantityy,
       finalPrice,
-      selectedOptions: selectedOptions
-        .map((optionId) => {
-          const option = options.find((o) => o.id === optionId);
-          return option
-            ? {
-                id: option.id,
-                name: option.option_name,
-                value: option.option_type,
-                additionalPrice: option.additional_price,
-              }
-            : null;
-        })
-        .filter((option) => option !== null),
+      selectedOptions,
       reservationDate,
-      tripId: tripId,
+      tripId,
     };
 
     console.log("Reservation Data:", reservationData);
@@ -156,7 +144,7 @@ const QuadTrip = () => {
 
     if (
       periodeOption &&
-      periodeOption.id == 2 &&
+      periodeOption.id === 2 &&
       (!timeOption || timeOption.id !== 3)
     ) {
       setErrorReservation(
@@ -177,13 +165,29 @@ const QuadTrip = () => {
     const clickedOption = options.find((option) => option.id === id);
 
     setSelectedOptions((prev) => {
-      const filteredOptions = prev.filter((optionId) => {
-        const option = options.find((o) => o.id === optionId);
-        return option.option_name !== clickedOption.option_name;
-      });
+      // Remove any previously selected options with the same name
+      const filteredOptions = prev.filter(
+        (option) => option.name !== clickedOption.option_name
+      );
 
-      // Toggle option selection
-      return prev.includes(id) ? filteredOptions : [...filteredOptions, id];
+      // Toggle option selection: if the option is already selected, remove it; otherwise, add it
+      const newSelectedOptions = prev.some(
+        (option) => option.name === clickedOption.option_name
+      )
+        ? filteredOptions
+        : [
+            ...filteredOptions,
+            {
+              id: clickedOption.id,
+              name: clickedOption.option_name,
+              value: clickedOption.option_type,
+            },
+          ];
+
+      // Log the new selected options for debugging
+      console.log("Selected Options:", newSelectedOptions);
+
+      return newSelectedOptions;
     });
   };
 
@@ -197,7 +201,7 @@ const QuadTrip = () => {
       email: data.email,
       tripDate: data.tripDate,
       remarque: data.remarque,
-      selectedOptionIds: data.selectedOptionIds, // Ensure this is an array of IDs
+      selectedOptions: data.selectedOptionIds, // Ensure this is an array of IDs
     };
 
     console.log("Reservation Data to be sent:", reservationData);
@@ -235,7 +239,7 @@ const QuadTrip = () => {
         reservationData={{
           // finalPrice: reservationData.finalPrice || 0,
           quantity: quantityy || 0,
-          selectedOptionIds: selectedOptions || [],
+          selectedOptionIds: selectedOptions,
           tripId: tripId,
           tripDate: reservationDate || "",
         }}
@@ -388,7 +392,10 @@ const QuadTrip = () => {
                           <div
                             key={option.id}
                             className={`flex items-center gap-2 p-2 cursor-pointer border-2 rounded ${
-                              selectedOptions.includes(option.id)
+                              selectedOptions.some(
+                                (selectedOption) =>
+                                  selectedOption.id === option.id
+                              )
                                 ? "border-primary"
                                 : "border-neutral-600"
                             }`}

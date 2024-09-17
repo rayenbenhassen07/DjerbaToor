@@ -18,6 +18,7 @@ const ReservationModal = ({ isOpen, onClose, onSubmit, reservationData }) => {
     return newErrors;
   };
 
+  console.log("ayoub ", reservationData);
   const handleModalSubmit = () => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {

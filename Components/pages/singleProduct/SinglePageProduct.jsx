@@ -72,27 +72,6 @@ const SinglePageProduct = ({ slug }) => {
     }
   }, [data, selectedOptions, options, tripQuantity]);
 
-  const handleOptionClick = (id) => {
-    const clickedOption = options.find((option) => option.id === id);
-
-    setSelectedOptions((prev) => {
-      const filteredOptions = prev.filter((optionId) => {
-        const option = options.find((o) => o.id === optionId);
-        return option.option_name !== clickedOption.option_name;
-      });
-
-      // If the clicked option is already selected, subtract its additional price
-      if (prev.includes(id)) {
-        setFinalPrice(finalPrice - clickedOption.additional_price);
-        return filteredOptions;
-      }
-
-      // Otherwise, add its additional price
-      setFinalPrice(finalPrice + clickedOption.additional_price);
-      return [...filteredOptions, id];
-    });
-  };
-
   const tripId = data?.id;
 
   const handleSubmit = (e) => {
@@ -102,38 +81,27 @@ const SinglePageProduct = ({ slug }) => {
     const data = {
       finalPrice,
       tripQuantity, // Add trip quantity to the reservation data
-      selectedOptions: selectedOptions
-        .map((optionId) => {
-          const option = options.find((o) => o.id === optionId);
-          return option
-            ? {
-                id: option.id,
-                name: option.option_name,
-                value: option.option_type,
-              }
-            : null;
-        })
-        .filter((option) => option !== null),
+      selectedOptions,
       reservationDate,
       tripId: tripId,
     };
 
-    // Check if each option group has at least one selected option
-    const groupedOptions = options.reduce((acc, option) => {
-      (acc[option.option_name] = acc[option.option_name] || []).push(option);
-      return acc;
-    }, {});
+    console.log("Reservation Data:", reservationData);
 
-    const missingOptions = Object.entries(groupedOptions).some(
-      ([optionName, group]) => {
-        return !data.selectedOptions.some(
-          (selected) => selected.name === optionName
-        );
-      }
-    );
+    // Get unique option groups
+    const optionGroups = [...new Set(options.map((o) => o.group))];
 
-    if (missingOptions) {
-      setErrorReservation("Please select an option for each option group.");
+    // Check if the user selected at least one option from each group
+    const missingOptionGroups = optionGroups.filter((group) => {
+      return !data.selectedOptions.some((option) => option.group === group);
+    });
+
+    if (missingOptionGroups.length > 0) {
+      setErrorReservation(
+        `Please select at least one option for each group: ${missingOptionGroups.join(
+          ", "
+        )}`
+      );
       return;
     }
 
@@ -167,6 +135,36 @@ const SinglePageProduct = ({ slug }) => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  const handleOptionClick = (id) => {
+    const clickedOption = options.find((option) => option.id === id);
+
+    setSelectedOptions((prev) => {
+      // Remove any previously selected options with the same name
+      const filteredOptions = prev.filter(
+        (option) => option.name !== clickedOption.option_name
+      );
+
+      // Toggle option selection: if the option is already selected, remove it; otherwise, add it
+      const newSelectedOptions = prev.some(
+        (option) => option.name === clickedOption.option_name
+      )
+        ? filteredOptions
+        : [
+            ...filteredOptions,
+            {
+              id: clickedOption.id,
+              name: clickedOption.option_name,
+              value: clickedOption.option_type,
+            },
+          ];
+
+      // Log the new selected options for debugging
+      console.log("Selected Options:", newSelectedOptions);
+
+      return newSelectedOptions;
+    });
+  };
+
   const handleModalSubmit = async (data) => {
     // Prepare the data to be sent to the backend
     const reservationData = {
@@ -177,7 +175,7 @@ const SinglePageProduct = ({ slug }) => {
       email: data.email,
       tripDate: data.tripDate,
       remarque: data.remarque,
-      selectedOptionIds: data.selectedOptionIds, // Ensure this is an array of IDs
+      selectedOptions: data.selectedOptionIds, // Ensure this is an array of IDs
     };
 
     console.log("Reservation Data to be sent:", reservationData);
@@ -216,8 +214,7 @@ const SinglePageProduct = ({ slug }) => {
         reservationData={{
           // finalPrice: reservationData.finalPrice || 0,
           quantity: reservationData?.tripQuantity || 1,
-          selectedOptionIds:
-            reservationData?.selectedOptions?.map((option) => option.id) || [],
+          selectedOptionIds: selectedOptions,
           tripId: tripId,
           tripDate: reservationData?.reservationDate || "",
         }}
@@ -327,7 +324,10 @@ const SinglePageProduct = ({ slug }) => {
                           <div
                             key={option.id}
                             className={`flex items-center gap-2 p-2 cursor-pointer border-2 rounded ${
-                              selectedOptions.includes(option.id)
+                              selectedOptions.some(
+                                (selectedOption) =>
+                                  selectedOption.id === option.id
+                              )
                                 ? "border-primary"
                                 : "border-neutral-600"
                             }`}

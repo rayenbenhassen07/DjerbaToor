@@ -3,6 +3,8 @@ import Link from "next/link";
 import React from "react";
 import TripsGrid from "./TripsGrid";
 
+import { IoMdStar } from "react-icons/io";
+
 const HomePage = () => {
   return (
     <div className="w-full bg-neutral-800 text-white flex flex-col ">
@@ -48,6 +50,113 @@ const HomePage = () => {
           <TripsGrid />
         </div>
       </section>
+
+      {/* Testimonials */}
+      <section className="py-16 bg-blue-500 text-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-semibold text-center mb-12">
+            What Our Travelers Say
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "John D.",
+                text: "Amazing experience! TravelEase made planning my trip so simple.",
+              },
+              {
+                name: "Sarah M.",
+                text: "The best travel website I've ever used. Highly recommended!",
+              },
+              {
+                name: "Mike R.",
+                text: "Found great deals and had an unforgettable vacation. Thank you!",
+              },
+            ].map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-white bg-opacity-10 p-6 rounded-lg"
+              >
+                <p className="mb-4 italic">"{testimonial.text}"</p>
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
+                  <div>
+                    <p className="font-semibold">{testimonial.name}</p>
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <IoMdStar
+                          key={i}
+                          className="w-4 h-4 fill-current text-yellow-400"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-gray-800 text-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">About TravelEase</h3>
+              <p className="text-gray-400">
+                We make travel planning easy and enjoyable. Find your next
+                adventure with us!
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="/" className="text-gray-400 hover:text-white">
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/product-category/excursions"
+                    className="text-gray-400 hover:text-white"
+                  >
+                    Excursions
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-400 hover:text-white">
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-400 hover:text-white">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
+              <div className="flex space-x-4">
+                <a href="#" className="text-gray-400 hover:text-white">
+                  Facebook
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white">
+                  Twitter
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white">
+                  Instagram
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+            <p>
+              &copy; {new Date().getFullYear()} TravelEase. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -25,7 +25,7 @@ export async function POST(request) {
         email: data.email,
         date: reservationDate,
         remarque: data.remarque,
-        options: JSON.stringify(data.selectedOptionIds),
+        options: JSON.stringify(data.selectedOptions),
       },
     });
 
