@@ -51,6 +51,72 @@ const HomePage = () => {
         </div>
       </section>
 
+      <main className="  flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="w-full px-4 md:px-6">
+            <div className="w-full flex justify-around gap-4 items-center ">
+              <div className="space-y-4 w-1/3">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                  Our Mission
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Duis aute irure dolor in reprehenderit in voluptate velit esse
+                  cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                  occaecat cupidatat non proident, sunt in culpa qui officia
+                  deserunt mollit anim id est laborum.
+                </p>
+              </div>
+
+              <Image
+                src="/sahara.jpeg"
+                width={600}
+                height={400}
+                alt="Placeholder image"
+                className="rounded-lg object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="w-full px-4 md:px-6">
+            <div className="w-full flex justify-around gap-4 items-center ">
+              <Image
+                src="/djerba.png"
+                width={600}
+                height={400}
+                alt="Placeholder image"
+                className="rounded-lg object-cover"
+              />
+
+              <div className="space-y-4 w-1/3">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                  Our Mission
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Duis aute irure dolor in reprehenderit in voluptate velit esse
+                  cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                  occaecat cupidatat non proident, sunt in culpa qui officia
+                  deserunt mollit anim id est laborum.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
       {/* Testimonials */}
       <section className="py-16 bg-blue-500 text-white">
         <div className="container mx-auto px-4">
